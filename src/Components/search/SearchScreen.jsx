@@ -1,14 +1,35 @@
-import React from 'react'
+import React  from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getHeroeByName } from '../../selectors/getHeroeByName'
+import { HeroCard } from '../hero/HeroCard'
 import { useForm } from '../hooks/useForm'
+import queryString from 'query-string'
 
 export const SearchScreen = () => {
-  const formInitialState={searchText:''}
-  const [formSearch, handleInputChange]=useForm(formInitialState)
-  const {searchText}=formSearch
+  
+  
+  const navigate=useNavigate()
+  const location = useLocation()
+
+  const {q = ''} = queryString.parse(location.search)
+
+
+
+  const [formValues, handleInputChange]=useForm({
+    searchText:q,})
+
+    const {searchText}=formValues
+
   const handleSearch=(e)=>{
     e.preventDefault()
-    console.log(formSearch)
+    console.log(searchText)
+
+    navigate(`?q=${searchText}`)
+    
+      
   }
+
+  const heroesFileted=getHeroeByName(q)
 
   return (
     <div>
@@ -37,7 +58,22 @@ export const SearchScreen = () => {
                 Search...
               </button>
             </form>
+
+
         </div> 
+        <div className='col-7'>
+          <h4>Results</h4>
+          <hr/>
+
+          {
+            heroesFileted.map(hero=>(
+              <HeroCard key={hero.id}
+              {...hero}
+              />
+            ))
+          }
+
+        </div>
 
       </div>
     </div>
