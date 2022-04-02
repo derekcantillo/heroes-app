@@ -1,4 +1,4 @@
-import React  from 'react'
+import React, {useMemo}  from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getHeroeByName } from '../../selectors/getHeroeByName'
 import { HeroCard } from '../hero/HeroCard'
@@ -29,7 +29,7 @@ export const SearchScreen = () => {
       
   }
 
-  const heroesFileted=getHeroeByName(q)
+  const heroesFileted=useMemo(()=>getHeroeByName(q), [q])
 
   return (
     <div>
@@ -64,6 +64,12 @@ export const SearchScreen = () => {
         <div className='col-7'>
           <h4>Results</h4>
           <hr/>
+
+          {
+            (q=='') ? (
+              <div className='alert alert-info'>Busque un héroe para mostrar resultados...</div>
+            ):(heroesFileted.length===0) && <div className='alert alert-danger'>No hay resultados para {q}</div>
+          }
 
           {
             heroesFileted.map(hero=>(
